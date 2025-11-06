@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Results | CAE Use of English</title>
+<style>
+:root {
+  --accent:#ff7a1a;
+  --ok:#1db954;
+  --err:#e74c3c;
+}
+body {
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:#f5f5f5;
+  color:#1e1e1e;
+  line-height:1.7;
+  margin:0;
+}
+header {
+  background:linear-gradient(90deg,#2a2a2a,#1e1e1e);
+  color:var(--accent);
+  padding:1rem 1.5rem;
+}
+header h1 {margin:0;font-size:1.25rem;}
+main {
+  width:min(1100px,100%);
+  margin:2rem auto;
+  padding:0 1rem;
+}
+.card {
+  background:#fff;
+  border-radius:14px;
+  box-shadow:0 6px 24px rgba(0,0,0,.1);
+  padding:1.5rem;
+  margin-bottom:1rem;
+}
+.correct {color:var(--ok);font-weight:700;}
+.incorrect {color:var(--err);font-weight:700;}
+.keyword {
+  background:#fff2e6;
+  border:1px solid var(--accent);
+  border-radius:8px;
+  padding:2px 8px;
+  font-weight:600;
+  display:inline-block;
+  margin-bottom:6px;
+}
+.scorebox, .totalbottom {
+  background:#fff;
+  border:2px solid var(--accent);
+  border-radius:12px;
+  padding:1rem;
+  text-align:center;
+  font-weight:700;
+}
+.scorebox {margin-bottom:2rem;}
+.totalbottom {margin-top:2rem;}
+footer {
+  text-align:center;
+  background:#2a2a2a;
+  color:#ccc;
+  padding:1rem;
+}
+footer span {
+  color:var(--accent);
+  font-weight:700;
+}
+</style>
+</head>
+
+<body>
+<header><h1>CAE Use of English – Results</h1></header>
+<main>
+  <div id="scoreContainer" class="scorebox"></div>
+  <div id="results"></div>
+  <div id="scoreBottom" class="totalbottom"></div>
+</main>
+<footer>© <span>Koala Spies Sydney</span> · Modern English Australia · All Rights Reserved</footer>
+
+<script>
+// ======= Full sentences & accepted answers =======
+const questions = {
+  q0: {
+    full: "Why don’t you ________ again if it isn’t working?",
+    correct: ["turn it on and off"]
+  },
+  q1: {
+    full: "Because of the storm, the ________ for a few hours.",
+    correct: ["power went down", "electricity went down"]
+  },
+  q2: {
+    full: "The instructions said ________ to the bottom of the page.",
+    correct: ["to scroll down"]
+  },
+  q3: {
+    full: "By the end of this decade AI might ________ many white collar jobs.",
+    correct: ["have wiped out", "wiped out", "wipe out"]
+  },
+  q4: {
+    full: "The staff member failed ________ on to the main drive.",
+    correct: ["to back up the files", "to back the files up", "back them up"]
+  },
+  q5: {
+    full: "It's a good idea ________ to prevent viruses from attacking your system.",
+    correct: ["to set up software", "to set up a program", "to set up a programme", "to set software up", "to set a programme up", "to set a program up"]
+  }
+};
+
+// ===== Strict Compare Function =====
+function compare(student, possibleAnswers) {
+  if (!student) return 0;
+
+  const normalize = t =>
+    t.toLowerCase().trim().replace(/\s+/g, ' ');
+
+  const A = normalize(student);
+
+  // Strictly match against any listed correct answer
+  for (let ans of possibleAnswers) {
+    const B = normalize(ans);
+    if (A === B) return 2;
+  }
+
+  return 0;
+}
+
+// ===== Load answers & score =====
+const data = JSON.parse(localStorage.getItem('studentAnswers') || "{}");
+let total = 0;
+const questionNumbers = [1,2,3,4,5];
+const max = questionNumbers.length * 2;
+let out = "";
+
+// ===== Build results =====
+Object.keys(questions).forEach((q, i) => {
+  const student = data[q] || "";
+  const isExample = q === "q0";
+  const points = isExample ? 0 : compare(student, questions[q].correct);
+  if (!isExample) total += points;
+
+  const colorClass = isExample ? "" : points === 2 ? "correct" : "incorrect";
+  const displayAnswer = student
+    ? `<span class="${colorClass}">${student}</span>`
+    : "(no answer given)";
+
+  const fullSentence = questions[q].full.replace("______", displayAnswer);
+  const correctSentence = questions[q].full.replace("______", questions[q].correct[0]);
+  const otherAnswers = questions[q].correct.slice(1);
+
+  out += `
+  <div class="card">
+    <div><strong>Question ${i}</strong> ${isExample ? "(Example – not scored)" : ""}</div>
+    <p><strong>Your completed sentence:</strong><br>${fullSentence}</p>
+    <p><strong>Correct sentence:</strong><br>${correctSentence}</p>
+    ${otherAnswers.length > 0
+      ? `<p><strong>Other accepted answers:</strong><br>${otherAnswers.join(", ")}</p>` 
+      : ""}
+    ${isExample ? "" : `<p><strong>Score for this item:</strong> ${points}/2</p>`}
+  </div>`;
+});
+
+// ===== Totals =====
+document.getElementById("results").innerHTML = out;
+document.getElementById("scoreContainer").innerHTML =
+  `<h2>Your total score: ${total} / ${max}</h2>`;
+document.getElementById("scoreBottom").innerHTML =
+  `Final Total Score: ${total} / ${max}`;
+</script>
+</body>
+</html>
