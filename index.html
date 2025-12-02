@@ -32,6 +32,33 @@ header span{
   padding:4px 10px;border-radius:999px;margin-right:6px;font-weight:700;
 }
 main{width:min(1100px,100%);margin:2rem auto;padding:0 1rem}
+
+/* NEW BUTTON SECTION */
+.download-box{
+  background:var(--card);
+  border-radius:var(--radius);
+  padding:1.3rem 1.5rem;
+  margin-bottom:1.5rem;
+  box-shadow:var(--shadow);
+  text-align:center;
+}
+.download-btn{
+  display:inline-block;
+  background:var(--accent);
+  color:#1e1e1e;
+  padding:0.8rem 1.6rem;
+  font-weight:700;
+  border-radius:12px;
+  text-decoration:none;
+  transition:0.3s ease;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
+}
+.download-btn:hover{
+  background:#e56e00;
+  color:#fff;
+  transform:scale(1.04);
+}
+
 section.instructions{
   background:var(--card);border-radius:var(--radius);
   box-shadow:var(--shadow);padding:1.5rem;margin-bottom:1.5rem;
@@ -78,6 +105,14 @@ footer span{color:var(--accent);font-weight:700}
 </header>
 
 <main>
+
+  <!-- NEW DOWNLOAD BUTTON SECTION -->
+  <div class="download-box">
+    <a class="download-btn" href="lesson-phrasal-verbs.pdf" download>
+      Review the phrasal verbs and get the answer code
+    </a>
+  </div>
+
   <section class="instructions">
     <h2>Instructions</h2>
     <p>
@@ -118,7 +153,7 @@ footer span{color:var(--accent);font-weight:700}
 
   <article>
     <div><span class="num">3</span></div>
-    <p>Some believe that AI could have destroyed many office jobs  by 2030.</p>
+    <p>Some believe that AI could have destroyed many office jobs by 2030.</p>
     <div class="keyword">OUT</div>
     <p>
       By the end of this decade AI might <input id="q3" class="blank" placeholder="Type here"> many white collar jobs.
@@ -152,15 +187,13 @@ footer span{color:var(--accent);font-weight:700}
 
 <script>
 document.getElementById('submitBtn').addEventListener('click', () => {
-  // Prompt for access code
   const code = prompt("Enter access code to view results:");
   if (code !== "CAE2025") {
     alert("Incorrect code. Please try again later or ask your teacher.");
-    return; // stop here
+    return;
   }
 
   const answers = {};
-  // Only record real questions (exclude example)
   for (let i = 1; i <= 5; i++) {
     const field = document.getElementById('q' + i);
     if (field) answers['q' + i] = field.value.trim();
@@ -170,6 +203,6 @@ document.getElementById('submitBtn').addEventListener('click', () => {
   window.location.href = 'results.html';
 });
 </script>
+
 </body>
 </html>
-
